@@ -29,6 +29,7 @@ namespace dnf_composer
 
 		bool getCloseUI() const;
 		bool getActivateUserInterface() const;
+		std::shared_ptr<Simulation> getSimulation() const;
 
 		~Application() = default;
 	};

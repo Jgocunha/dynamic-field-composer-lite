@@ -59,5 +59,9 @@ namespace dnf_composer
 	{
 		return activateUserInterface;
 	}
-	
+
+	std::shared_ptr<Simulation> Application::getSimulation() const
+	{
+		return simulation;
+	}
 }

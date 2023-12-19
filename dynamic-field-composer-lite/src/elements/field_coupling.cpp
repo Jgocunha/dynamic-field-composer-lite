@@ -24,7 +24,7 @@ namespace dnf_composer
 			// Initialize the weight matrix with random values
 			utilities::fillMatrixWithRandomValues(weights, -1, 1);
 
-			weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/" + commonParameters.identifiers.uniqueName + "_weights.txt";
+			weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/couplings/" + commonParameters.identifiers.uniqueName + "/" +commonParameters.identifiers.uniqueName + "_weights.txt";
 
 			updateAllWeights = true;
 			trained = false;

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <thread>
+
+#include "./application/application.h"
 #include "./simulation/simulation.h"
 #include "./elements/neural_field.h"
 #include "./elements/field_coupling.h"
@@ -9,46 +12,27 @@
 
 namespace dnf_composer
 {
+	struct RelevantSimulationElements
+	{
+		std::shared_ptr<element::NeuralField> inputField;
+		std::shared_ptr<element::NeuralField> targetField;
+		std::shared_ptr<element::FieldCoupling> fieldCoupling;
+	};
+
 	class LearningWizard
 	{
 	private:
-		std::shared_ptr<Simulation> simulation;
-		std::shared_ptr<element::FieldCoupling> fieldCoupling;
-
-		std::shared_ptr<element::NeuralField> neuralFieldPre;
-		std::shared_ptr<element::NeuralField> neuralFieldPost;
-
-		std::vector<std::vector<double>> targetPeakLocationsForNeuralFieldPre;
-		std::vector<std::vector<double>> targetPeakLocationsForNeuralFieldPost;
-
-		element::GaussStimulusParameters gaussStimulusParameters = { 15, 3 };
-
-		std::string pathToFieldActivationPre;
-		std::string pathToFieldActivationPost;
-
+		Application application;
+		RelevantSimulationElements elements;
+		std::thread applicationThread;
 	public:
-		LearningWizard() = default;
-		LearningWizard(const std::shared_ptr<Simulation>& simulation, const std::string& fieldCouplingUniqueId);
-		~LearningWizard() = default;
-
-		void setDataFilePath(const std::string& filePath);
-
-		void setGaussStimulusParameters(const element::GaussStimulusParameters& gaussStimulusParameters);
-		void setTargetPeakLocationsForNeuralFieldPre(const std::vector<std::vector<double>>& targetPeakLocationsForNeuralFieldPre);
-		void setTargetPeakLocationsForNeuralFieldPost(const std::vector<std::vector<double>>& targetPeakLocationsForNeuralFieldPost);
-
-		void simulateAssociation();
-		void trainWeights(int iterations) const;
-		void saveWeights() const;
-		void clearTargetPeakLocationsFromFiles() const;
-
+		LearningWizard(const std::shared_ptr<Simulation>& simulation, const std::string& fieldCouplingName, bool activateUI = true);
+		void run();
 	private:
-		void setFieldCoupling(const std::string& fieldCouplingUniqueId);
-		void setNeuralFieldPre();
-		void setNeuralFieldPost();
-
-		static std::vector<double> readFieldActivation(const std::string& filename, int line);
-		static void saveFieldActivation(const std::vector<double>* fieldActivation, const std::string& filename);
-		static std::vector<double> normalizeFieldActivation(std::vector<double>& vec, const double& restingLevel);
+		int runApplication() const;
+		int runLearning() const;
+		void findRelevantElements(const std::string& fieldCouplingName);
+		void findInputField();
+		void findTargetField();
 	};
 }

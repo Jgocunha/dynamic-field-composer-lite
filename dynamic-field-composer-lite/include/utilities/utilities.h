@@ -44,5 +44,36 @@ namespace dnf_composer
 				for (auto& element : row)
 					element = dis(gen);
 		}
+
+		template <typename T>
+		std::string matrixToString(const std::vector<std::vector<T>>& matrix)
+		{
+			std::stringstream ss;
+			ss << "[";
+			for (const auto& row : matrix)
+			{
+				ss << "[";
+				for (const auto& value : row)
+				{
+					ss << value << " ";
+				}
+				ss << "] ";
+			}
+			ss << "]";
+			return ss.str();
+		}
+
+		template <typename T>
+		std::string vectorToString(const std::vector<T>& vec)
+		{
+			std::stringstream ss;
+			ss << "[";
+			for (const auto& value : vec)
+			{
+				ss << value << " ";
+			}
+			ss << "]";
+			return ss.str();
+		}
 	}
 }
