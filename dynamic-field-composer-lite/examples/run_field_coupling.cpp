@@ -49,6 +49,21 @@ std::shared_ptr<Simulation> getSimulation()
 	simulation->createInteraction("input field", "output", "input - target");
 	simulation->createInteraction("input - target", "output", "target field");
 
+	LearningWizard learningWizard{ simulation, "input - target" };
+
+	std::vector<std::vector<double>> inputTargetPeaksForCoupling =
+	{
+		{ 50.00 },
+	};
+	std::vector<std::vector<double>> outputTargetPeaksForCoupling =
+	{
+		{ 90.00 },
+	};
+
+	learningWizard.setPeakLocationsForInputField(inputTargetPeaksForCoupling);
+	learningWizard.setPeakLocationsForOutputField(outputTargetPeaksForCoupling);
+	learningWizard.run(1);
+
 	return simulation;
 }
 
