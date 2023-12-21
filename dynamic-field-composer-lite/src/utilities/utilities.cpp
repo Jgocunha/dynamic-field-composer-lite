@@ -35,5 +35,12 @@ namespace dnf_composer::utilities
 		}
 		return false;
 	}
+
+	bool saveMatrixToFile(const std::vector<std::vector<double>>& matrix, const std::string& filename)
+	{
+		
+	}
+
+
 }
 

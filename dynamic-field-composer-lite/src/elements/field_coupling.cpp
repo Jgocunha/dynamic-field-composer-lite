@@ -21,156 +21,39 @@ namespace dnf_composer
 			components["input"] = std::vector<double>(parameters.inputFieldSize);
 			utilities::resizeMatrix(weights, static_cast<int>(components["input"].size()), static_cast<int>(components["output"].size()));
 
-			// Initialize the weight matrix with random values
-			utilities::fillMatrixWithRandomValues(weights, -1, 1);
-
-			weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/couplings/" + commonParameters.identifiers.uniqueName + "/" +commonParameters.identifiers.uniqueName + "_weights.txt";
-
-			updateAllWeights = true;
-			trained = false;
+			utilities::fillMatrixWithZeros(weights);
 		}
 
 		void FieldCoupling::init()
 		{
-			std::ranges::fill(components["input"], 0);
-			std::ranges::fill(components["output"], 0);
-
-			if (readWeights())
-				trained = true;
-			else
+			//std::ranges::fill(components["input"], 0);
+			//std::ranges::fill(components["output"], 0);
+			if(!readWeights())
 			{
-				utilities::resizeMatrix(weights, static_cast<int>(components["input"].size()), static_cast<int>(components["output"].size()));
-				utilities::fillMatrixWithRandomValues(weights, 0.0, 0.0);
-				trained = false;
+				utilities::fillMatrixWithRandomValues(weights);
 				writeWeights();
 			}
 		}
 
-		void FieldCoupling::step(double t, double deltaT)
-		{
-			getInputFunction();
-			computeOutput();
-			scaleOutput();
-		}
-
-		void FieldCoupling::close()
-		{
-			std::ranges::fill(components["input"], 0);
-			std::ranges::fill(components["output"], 0);
-			resetWeights();
-		}
-
-		void FieldCoupling::printParameters()
-		{
-			printCommonParameters();
-
-			std::ostringstream logStream;
-
-			logStream << "Logging specific element parameters" << std::endl;
-			logStream << "Input Field Size: " << parameters.inputFieldSize << std::endl;
-			logStream << "Scalar: " << parameters.scalar << std::endl;
-			logStream << "Learning Rate: " << parameters.learningRate << std::endl;
-			logStream << "Learning Rule: ";
-			switch (parameters.learningRule)
-			{
-			case LearningRule::HEBBIAN:
-				logStream << "Hebbian learning rule" << std::endl;;
-				break;
-			case LearningRule::DELTA_WIDROW_HOFF:
-				logStream << "Delta learning rule Widrow Hoff variation" << std::endl;;
-				break;
-			case LearningRule::DELTA_KROGH_HERTZ:
-				logStream << "Delta learning rule Krogh and Hertz variation" << std::endl;;
-				break;
-			}
-
-			log(LogLevel::INFO, logStream.str());
-		}
-
-		void FieldCoupling::getInputFunction()
-		{
-			// get input
-			updateInput();
-			// only the positive values of the input are considered
-			for (auto& value : components["input"])
-				if (value < 0)
-					value = 0;
-		}
-
-		void FieldCoupling::computeOutput()
-		{
-			// multiply the input by the weights to get output
-			for (int i = 0; i < components["output"].size(); i++)
-				for (int j = 0; j < components["input"].size(); j++)
-					components["output"][i] += weights[j][i] * components["input"][j];
-
-			// only the positive values of the output are considered
-			for (auto& value : components["output"])
-				if (value < 0)
-					value = 0;
-		}
-
-		void FieldCoupling::scaleOutput()
-		{
-			// Scale the output by parameter k
-			for (auto& value : components["output"])
-				value *= parameters.scalar;
-		}
-
-		void FieldCoupling::resetWeights()
-		{
-			// empty weight matrix
-			utilities::fillMatrixWithRandomValues(weights, 0, 0);
-		}
-
-		void FieldCoupling::setUpdateAllWeights(bool updateAllWeights)
-		{
-			this->updateAllWeights = updateAllWeights;
-		}
-
-		void FieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
-		{
-			switch (parameters.learningRule)
-			{
-			case LearningRule::HEBBIAN:
-				weights = mathtools::hebbLearningRule(input, output, parameters.learningRate);
-				break;
-			case LearningRule::DELTA_WIDROW_HOFF:
-				weights = mathtools::deltaLearningRuleWidrowHoff(weights, input, output, parameters.learningRate);
-				break;
-			case LearningRule::DELTA_KROGH_HERTZ:
-				weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningRate);
-				break;
-			}
-
-			writeWeights();
-		}
-
-		void FieldCoupling::setLearningRate(double learningRate)
-		{
-			parameters.learningRate = learningRate;
-		}
-
-		const std::vector<std::vector<double>>& FieldCoupling::getWeights() const
-		{
-			return weights;
-		}
-
 		bool FieldCoupling::readWeights()
 		{
-			std::ifstream file(weightsFilePath); 
+			const std::string weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/field-coupling-weights/" + commonParameters.identifiers.uniqueName + "_weights.txt";
+			std::ifstream file(weightsFilePath);
+
+
+
 
 			if (file.is_open()) {
 				utilities::resizeMatrix(weights, 0, 0);
 				double element;
 				std::vector<double> row;
-				while (file >> element) 
-				{  
-					row.push_back(element);  
+				while (file >> element)
+				{
+					row.push_back(element);
 					if (row.size() == components["output"].size())
 					{
-						weights.push_back(row);  
-						row.clear(); 
+						weights.push_back(row);
+						row.clear();
 					}
 				}
 				file.close();
@@ -181,23 +64,24 @@ namespace dnf_composer
 
 			const std::string message = "Failed to read weights '" + this->getUniqueName() + "' from: " + weightsFilePath + ". \n";
 			log(LogLevel::ERROR, message);
-			
+
 			return false;
 		}
 
 		void FieldCoupling::writeWeights() const
 		{
-			std::ofstream file(weightsFilePath);
+			const std::string weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/field-coupling-weights/" + commonParameters.identifiers.uniqueName + "_weights.txt";
+			std::ifstream file(weightsFilePath);
 
 			if (file.is_open()) {
 				for (const auto& row : weights) {
 					for (const auto& element : row) {
-						file << element << " ";  
+						file << element << " ";
 					}
-					file << '\n'; 
+					file << '\n';
 				}
 				file.close();
-				const std::string message = "Saved weights '" + this->getUniqueName() +"' to: " + weightsFilePath + ". \n";
+				const std::string message = "Saved weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
 				log(LogLevel::INFO, message);
 			}
 			else
@@ -205,16 +89,6 @@ namespace dnf_composer
 				const std::string message = "Failed to saved weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
 				log(LogLevel::ERROR, message);
 			}
-		}
-
-		void FieldCoupling::saveWeights() const
-		{
-			writeWeights();
-		}
-
-		void FieldCoupling::setWeightsFilePath(const std::string& filePath)
-		{
-			weightsFilePath = filePath + "/" + commonParameters.identifiers.uniqueName + "_weights.txt";
 		}
 	}
 }

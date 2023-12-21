@@ -2,8 +2,8 @@
 
 #include <set>
 
-#include "mathtools/mathtools.h"
 #include "element.h"
+#include "mathtools/mathtools.h"
 #include "utilities/utilities.h"
 
 
@@ -18,12 +18,17 @@ namespace dnf_composer
 
 	namespace element
 	{
+		struct LearningParameters
+		{
+			double learningRate;
+			LearningRule learningRule;
+		};
+
 		struct FieldCouplingParameters
 		{
 			int inputFieldSize;
 			double scalar;
-			double learningRate;
-			LearningRule learningRule;
+			LearningParameters learningParameters;
 		};
 
 		class FieldCoupling : public Element
@@ -31,37 +36,18 @@ namespace dnf_composer
 		protected:
 			FieldCouplingParameters parameters;
 			std::vector<std::vector<double>> weights;
-			bool trained;
-			bool updateAllWeights;
-			std::string weightsFilePath;
 		public:
 			FieldCoupling(const ElementCommonParameters& elementCommonParameters, const FieldCouplingParameters& fc_parameters);
 
 			void init() override;
 			void step(double t, double deltaT) override;
 			void close() override;
-
 			void printParameters() override;
 
-			void setWeightsFilePath(const std::string& filePath);
-			bool readWeights();
-			void resetWeights();
-			void saveWeights() const;
-			virtual void updateWeights(const std::vector<double>& input, const std::vector<double>& output);
-
-			void setLearningRate(double learningRate);
-			void setUpdateAllWeights(bool updateAllWeights);
-
-			const std::vector<std::vector<double>>& getWeights() const;
-
 			~FieldCoupling() override = default;
-
-		protected:
-			void getInputFunction();
-			void computeOutput();
-			void scaleOutput();
-
-			void writeWeights() const;
+		private:
+			bool readWeights();
+			void writeWeights();
 		};
 	}
 }

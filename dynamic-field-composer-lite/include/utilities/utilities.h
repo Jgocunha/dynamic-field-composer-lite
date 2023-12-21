@@ -14,6 +14,10 @@ namespace dnf_composer
 
 		bool saveVectorToFile(const std::vector<double>& vector, const std::string& filename);
 
+		bool saveMatrixToFile(const std::vector<std::vector<double>>& matrix, const std::string& filename);
+
+		std::vector<std::vector<double>> readMatrixFromFile();
+
 		template <typename T>
 		void resizeMatrix(std::vector<std::vector<T>>& matrix, int newRowSize, int newColSize)
 		{
@@ -43,6 +47,14 @@ namespace dnf_composer
 			for (auto& row : matrix)
 				for (auto& element : row)
 					element = dis(gen);
+		}
+
+		template <typename T>
+		void fillMatrixWithZeros(std::vector<std::vector<T>>& matrix)
+		{
+			for (auto& row : matrix)
+				for (auto& element : row)
+					element = 0;
 		}
 
 		template <typename T>

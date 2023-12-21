@@ -83,10 +83,6 @@ set(user_interface_headers
     "include/user_interface/simulation_window.h"
     "include/user_interface/logger_window.h"
 )
-set(architecture_headers
-    "include/architecture/architecture_builder.h"
-    "include/architecture/architecture_file_handler.h"
-)
 set(wizards_headers
     "include/wizards/learning_wizard.h"
 )
@@ -139,9 +135,6 @@ set(src
     "src/user_interface/plot_window.cpp"
     "src/user_interface/simulation_window.cpp"
     "src/user_interface/logger_window.cpp"
-
-    "src/architecture/architecture_builder.cpp"
-    "src/architecture/architecture_file_handler.cpp"
 
     "src/wizards/learning_wizard.cpp"
 
@@ -230,12 +223,6 @@ set(EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS ${CMAKE_PROJECT_NAME}-example-run_sim_h
 add_executable(${EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS} "examples/run_sim_headless.cpp" ./resources/resources.rc)
 target_include_directories(${EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS} PRIVATE include)
 target_link_libraries(${EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS} PRIVATE imgui::imgui ${CMAKE_PROJECT_NAME})
-
-## Add executable example project run_sim_read_architecture_from_file
-#set(EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS ${CMAKE_PROJECT_NAME}-example-run_sim_read_architecture_from_file)
-#add_executable(${EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS} "examples/run_sim_read_architecture_from_file.cpp" ./resources/resources.rc)
-#target_include_directories(${EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS} PRIVATE include)
-#target_link_libraries(${EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS} PRIVATE imgui::imgui ${CMAKE_PROJECT_NAME})
 
 # Add executable example project run_learning_wizard
 set(EXE_PROJECT_EXAMPLE_RUN_SIM_HEADLESS ${CMAKE_PROJECT_NAME}-example-run_learning_wizard)

@@ -285,6 +285,7 @@ namespace dnf_composer
 				const std::shared_ptr<element::GaussKernel> gaussKernelNormalNoise(new element::GaussKernel({ std::string(id) + " gauss kernel", dimensions }, gkp));
 				simulation->addElement(normalNoise);
 				simulation->addElement(gaussKernelNormalNoise);
+				gaussKernelNormalNoise->addInput(normalNoise);
 			}
 		}
 
