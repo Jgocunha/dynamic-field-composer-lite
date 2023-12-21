@@ -91,15 +91,19 @@ namespace dnf_composer
 
 			const auto result = utilities::readMatrixFromFile(weightsFile);
 
-			// check if weight matrix sizes are equal first
-			//!
-
 			if (result.second) 
 			{
-				weights = result.first;
-				const std::string message = "Weights '" + this->getUniqueName() + "' read successfully from: " + weightsFile + ". \n";
-				log(LogLevel::INFO, message);
-				return true;
+				if (result.first.size() == weights.size() &&
+					(result.first.empty() || result.first[0].size() == weights[0].size()))
+				{
+					weights = result.first;
+					const std::string message = "Weights '" + this->getUniqueName() + "' read successfully from: " + weightsFile + ". \n";
+					log(LogLevel::INFO, message);
+					return true;
+				}
+				const std::string message = "Mismatched matrix sizes while reading weights '" + this->getUniqueName() + "' from: " + weightsFile + ". \n";
+				log(LogLevel::WARNING, message);
+				return false;
 			}
 
 			const std::string message = "Failed to read weights '" + this->getUniqueName() + "' from: " + weightsFile + ". \n";

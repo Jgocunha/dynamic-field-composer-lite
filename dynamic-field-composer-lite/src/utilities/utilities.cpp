@@ -20,7 +20,7 @@ namespace dnf_composer::utilities
 			return lineCount;
 		}
 		
-		return -1; // Return -1 to indicate an error
+		return -1; 
 	}
 
 	bool saveVectorToFile(const std::vector<double>& vector, const std::string& filename)
