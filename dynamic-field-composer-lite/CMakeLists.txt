@@ -236,6 +236,12 @@ add_executable(${EXE_PROJECT_EXAMPLE_RUN_SIM_ELEMENT_FACTORY} "examples/run_sim_
 target_include_directories(${EXE_PROJECT_EXAMPLE_RUN_SIM_ELEMENT_FACTORY} PRIVATE include)
 target_link_libraries(${EXE_PROJECT_EXAMPLE_RUN_SIM_ELEMENT_FACTORY} PRIVATE imgui::imgui ${CMAKE_PROJECT_NAME})
 
+# Add executable example project run_field_coupling
+set(EXE_PROJECT_EXAMPLE_RUN_FIELD_COUPLING ${CMAKE_PROJECT_NAME}-example-run_field_coupling)
+add_executable(${EXE_PROJECT_EXAMPLE_RUN_FIELD_COUPLING} "examples/run_field_coupling.cpp" ./resources/resources.rc)
+target_include_directories(${EXE_PROJECT_EXAMPLE_RUN_FIELD_COUPLING} PRIVATE include)
+target_link_libraries(${EXE_PROJECT_EXAMPLE_RUN_FIELD_COUPLING} PRIVATE imgui::imgui ${CMAKE_PROJECT_NAME})
+
 # Setup Catch2
 enable_testing()
 find_package(Catch2 CONFIG REQUIRED)

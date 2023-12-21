@@ -43,11 +43,12 @@ namespace dnf_composer
 			void step(double t, double deltaT) override;
 			void close() override;
 			void printParameters() override;
+			void updateWeights(const std::vector<double>& input, const std::vector<double>& output);
 
 			~FieldCoupling() override = default;
 		private:
 			bool readWeights();
-			void writeWeights();
+			void writeWeights() const;
 		};
 	}
 }

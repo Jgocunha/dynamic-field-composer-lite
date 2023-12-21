@@ -6,6 +6,7 @@
 #include <sstream>
 #include <fstream>
 
+
 namespace dnf_composer
 {
 	namespace utilities
@@ -16,7 +17,7 @@ namespace dnf_composer
 
 		bool saveMatrixToFile(const std::vector<std::vector<double>>& matrix, const std::string& filename);
 
-		std::vector<std::vector<double>> readMatrixFromFile();
+		std::pair<std::vector<std::vector<double>>, bool> readMatrixFromFile(const std::string& filename);
 
 		template <typename T>
 		void resizeMatrix(std::vector<std::vector<T>>& matrix, int newRowSize, int newColSize)

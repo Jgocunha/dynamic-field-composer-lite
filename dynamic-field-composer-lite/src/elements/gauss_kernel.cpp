@@ -33,7 +33,7 @@ namespace dnf_composer
 			std::iota(rangeX.begin(), rangeX.end(), -startingValue);
 			std::vector<double> gauss(commonParameters.dimensionParameters.size);
 			if (!normalized)
-				gauss = mathtools::gauss(rangeX, 0.0, parameters.sigma);
+				gauss = mathtools::gaussNorm(rangeX, 0.0, parameters.sigma);
 			else
 			{
 				const std::string message = "Tried to initialize a normalized Gaussian kernel '" + this->getUniqueName() + "'. That is not supported yet.\n";

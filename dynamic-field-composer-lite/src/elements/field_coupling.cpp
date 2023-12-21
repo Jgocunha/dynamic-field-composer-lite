@@ -32,63 +32,94 @@ namespace dnf_composer
 			{
 				utilities::fillMatrixWithRandomValues(weights);
 				writeWeights();
-			}
+			}	
 		}
+
+		void FieldCoupling::step(double t, double deltaT)
+		{
+			updateInput();
+
+			// multiply the input by the weights to get output
+			for (int i = 0; i < static_cast<int>(components["output"].size()); i++)
+				for (int j = 0; j < static_cast<int>(components["input"].size()); j++)
+					components["output"][i] += weights[j][i] * components["input"][j];
+
+			// only the positive values of the output are considered
+			//for (auto& value : components["output"])
+				//if (value < 0)
+					//value = 0;
+
+			// Scale the output by parameter k
+			for (auto& value : components["output"])
+				value *= parameters.scalar;
+
+		}
+
+		void FieldCoupling::close()
+		{
+			
+		}
+
+		void FieldCoupling::updateWeights(const std::vector<double>& input, const std::vector<double>& output)
+		{
+			switch (parameters.learningParameters.learningRule)
+			{
+			case LearningRule::HEBBIAN:
+				weights = mathtools::hebbLearningRule(input, output, parameters.learningParameters.learningRate);
+				break;
+			case LearningRule::DELTA_WIDROW_HOFF:
+				weights = mathtools::deltaLearningRuleWidrowHoff(weights, input, output, parameters.learningParameters.learningRate);
+				break;
+			case LearningRule::DELTA_KROGH_HERTZ:
+				weights = mathtools::deltaLearningRuleKroghHertz(weights, input, output, parameters.learningParameters.learningRate);
+				break;
+			}
+
+			//??writeWeights();
+		}
+
+
+		void FieldCoupling::printParameters()
+		{
+			
+		}
+
 
 		bool FieldCoupling::readWeights()
 		{
-			const std::string weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/field-coupling-weights/" + commonParameters.identifiers.uniqueName + "_weights.txt";
-			std::ifstream file(weightsFilePath);
+			const std::string weightsFile = std::string(OUTPUT_DIRECTORY) + "/couplings/" + commonParameters.identifiers.uniqueName + "_weights.txt";
 
+			const auto result = utilities::readMatrixFromFile(weightsFile);
 
+			// check if weight matrix sizes are equal first
+			//!
 
-
-			if (file.is_open()) {
-				utilities::resizeMatrix(weights, 0, 0);
-				double element;
-				std::vector<double> row;
-				while (file >> element)
-				{
-					row.push_back(element);
-					if (row.size() == components["output"].size())
-					{
-						weights.push_back(row);
-						row.clear();
-					}
-				}
-				file.close();
-				const std::string message = "Weights '" + this->getUniqueName() + "' read successfully from: " + weightsFilePath + ". \n";
+			if (result.second) 
+			{
+				weights = result.first;
+				const std::string message = "Weights '" + this->getUniqueName() + "' read successfully from: " + weightsFile + ". \n";
 				log(LogLevel::INFO, message);
 				return true;
 			}
 
-			const std::string message = "Failed to read weights '" + this->getUniqueName() + "' from: " + weightsFilePath + ". \n";
-			log(LogLevel::ERROR, message);
-
+			const std::string message = "Failed to read weights '" + this->getUniqueName() + "' from: " + weightsFile + ". \n";
+			log(LogLevel::WARNING, message);
 			return false;
 		}
 
 		void FieldCoupling::writeWeights() const
 		{
-			const std::string weightsFilePath = std::string(OUTPUT_DIRECTORY) + "/field-coupling-weights/" + commonParameters.identifiers.uniqueName + "_weights.txt";
-			std::ifstream file(weightsFilePath);
+			const std::string weightsFile = std::string(OUTPUT_DIRECTORY) + "/couplings/" + commonParameters.identifiers.uniqueName + "_weights.txt";
+			std::ifstream file(weightsFile);
 
-			if (file.is_open()) {
-				for (const auto& row : weights) {
-					for (const auto& element : row) {
-						file << element << " ";
-					}
-					file << '\n';
-				}
-				file.close();
-				const std::string message = "Saved weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
-				log(LogLevel::INFO, message);
-			}
-			else
+			if (utilities::saveMatrixToFile(weights, weightsFile))
 			{
-				const std::string message = "Failed to saved weights '" + this->getUniqueName() + "' to: " + weightsFilePath + ". \n";
-				log(LogLevel::ERROR, message);
+				const std::string message = "Saved weights '" + this->getUniqueName() + "' to: " + weightsFile + ". \n";
+				log(LogLevel::INFO, message);
+				return;
 			}
+			const std::string message = "Failed to saved weights '" + this->getUniqueName() + "' to: " + weightsFile + ". \n";
+			log(LogLevel::WARNING, message);
 		}
 	}
 }
