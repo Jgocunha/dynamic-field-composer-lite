@@ -148,11 +148,10 @@ namespace dnf_composer
 			return gaussResult;
 		}
 
-
 		std::array<int, 2> computeKernelRange(double sigma, int cutOfFactor, int fieldSize, bool circular);
 		std::vector<int> createExtendedIndex(int fieldSize, const std::array<int, 2>& kernelRange);
-
 		std::vector<double> generateNormalVector(int size);
+		std::vector<double> normalizeVector(const std::vector<double>& vec);
 
 		template <typename T>
 		std::vector<std::vector<T>> hebbLearningRule(const std::vector<T>& input, const std::vector<T>& targetOutput, double learningRate)
@@ -221,14 +220,14 @@ namespace dnf_composer
 		}
 
 		template <typename T>
-		std::vector<std::vector<T>> deltaLearningRuleKroghHertz(std::vector<std::vector<T>>& weights, const std::vector<T>& input, const std::vector<T>& targetOutput, double learningRate)
+		std::vector<std::vector<T>> deltaLearningRuleKroghHertz(std::vector<std::vector<T>>& weights, const std::vector<T>& input, const std::vector<T>& targetOutput, const double& learningRate)
 		{
 
 			double deltaT = 1.0;
 			double tau_w = 5.0;
 			double eta = 0.5;
 
-			const int inputSize = input.size();
+			int inputSize = input.size();
 			int outputSize = targetOutput.size();
 
 			// Calculate the activation levels of the fields based on the input values and current weights

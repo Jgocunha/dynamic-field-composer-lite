@@ -75,7 +75,8 @@ namespace dnf_composer
 				break;
 			}
 
-			//??writeWeights();
+			writeWeights();
+
 		}
 
 

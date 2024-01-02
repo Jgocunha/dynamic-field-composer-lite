@@ -63,5 +63,36 @@ namespace dnf_composer
 
 			return vec;
 		}
+
+		std::vector<double> normalizeVector(const std::vector<double>& vec)
+		{
+			// Make a copy of the input vector
+			std::vector<double> normalizedVec = vec;
+
+			constexpr double safetyFactor = 0.0;
+
+			for (double& val : normalizedVec)
+				if (val < 0.01)
+					val = 0;
+
+			// Find the minimum and maximum values in the vector
+			const double maxVal = *std::max_element(normalizedVec.begin(), normalizedVec.end()) + safetyFactor;
+			const double minVal = *std::min_element(normalizedVec.begin(), normalizedVec.end()) - safetyFactor;
+
+			// Normalize the vector
+			for (double& val : normalizedVec)
+			{
+				if (val != 0.0)
+				{
+					// Uncomment the following line if you want to normalize between -1 and 1
+					// val = (val - minVal) / (maxVal - minVal) * 2.0 - 1.0;
+
+					// Normalize between 0 and 1
+					val = (val - minVal) / (maxVal - minVal);
+				}
+			}
+
+			return normalizedVec;
+		}
 	}
 }

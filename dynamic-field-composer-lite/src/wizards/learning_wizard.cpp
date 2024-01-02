@@ -26,7 +26,7 @@ namespace dnf_composer
 
 	void LearningWizard::findTargetField()
     {
-		const std::shared_ptr<Simulation> simulation = application.getSimulation();
+		//const std::shared_ptr<Simulation> simulation = application.getSimulation();
 		elements.targetField = std::dynamic_pointer_cast<element::NeuralField>(simulation->getElementsThatHaveSpecifiedElementAsInput(elements.fieldCoupling->getUniqueName()).at(0));
 		log(LogLevel::INFO, "Learning wizard has found the target field '" + elements.targetField->getUniqueName() + "'.\n");
 	}
@@ -38,7 +38,7 @@ namespace dnf_composer
 
 	void LearningWizard::setPeakLocationsForTargetField(const std::vector<std::vector<double>>& peakLocations)
 	{
-		peakLocationsForOutputField = peakLocations;
+		//peakLocationsForOutputField = peakLocations;
 	}
 
 	void LearningWizard::run(int iterations)
@@ -65,10 +65,10 @@ namespace dnf_composer
 				const std::string stimulusName = "Input Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
 				element::ElementSpatialDimensionParameters stimulusDimensions{ elements.inputField->getMaxSpatialDimension(), elements.inputField->getStepSize() };
 				gsp.position = peakLocationsForInputField[i][j];
-				std::shared_ptr<element::GaussStimulus> stimulus = std::make_shared<element::GaussStimulus>({stimulusName, stimulusDimensions}, gsp);
+				//std::shared_ptr<element::GaussStimulus> stimulus = std::make_shared<element::GaussStimulus>({stimulusName, stimulusDimensions}, gsp);
 
-				simulation->addElement(stimulus);
-				elements.inputField->addInput(stimulus);
+				//simulation->addElement(stimulus);
+				//elements.inputField->addInput(stimulus);
 
 				simulation->init();
 				//elements.fieldCoupling->resetWeights();
@@ -81,10 +81,10 @@ namespace dnf_composer
 				const std::string stimulusName = "Target Gaussian Stimulus " + std::to_string(i + 1) + std::to_string(j + 1);
 				element::ElementSpatialDimensionParameters stimulusDimensions{ elements.targetField->getMaxSpatialDimension(), elements.targetField->getStepSize() };
 				gsp.position = peakLocationsForTargetField[i][j];
-				std::shared_ptr<element::GaussStimulus> stimulus = std::make_shared<element::GaussStimulus>({ stimulusName, stimulusDimensions }, gsp);
+				//std::shared_ptr<element::GaussStimulus> stimulus = std::make_shared<element::GaussStimulus>({ stimulusName, stimulusDimensions }, gsp);
 
-				simulation->addElement(stimulus);
-				elements.targetField->addInput(stimulus);
+				//simulation->addElement(stimulus);
+				//elements.targetField->addInput(stimulus);
 
 				simulation->init();
 				//elements.fieldCoupling->resetWeights();
