@@ -18,6 +18,27 @@ grid on;
 % Show the plot
 figure;
 
+% Load the data
+data = load('normalizedInputFieldActivation.txt');
+
+% Create a spatial vector (assuming a spatial step of 1 )
+space = 0:1:length(data)-1;
+
+% Plot the data
+plot(space, data);
+
+% Add labels and title
+xlabel('Space');
+ylabel('Value');
+title('Example Plot');
+
+% Show the grid
+grid on;
+
+% Show the plot
+figure;
+
+
 
 %% matrix
 % Open the file

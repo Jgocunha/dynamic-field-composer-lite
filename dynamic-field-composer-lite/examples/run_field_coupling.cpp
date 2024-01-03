@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
 		visualization->addPlottingData("target field", "activation");
 		app.activateUserInterfaceWindow(std::make_shared<user_interface::PlotWindow>(visualization, plotParameters));
 
+		std::cout << "Press enter to start the simulation." << std::endl;
 		// The actual test
 		app.init();
 
@@ -81,6 +82,10 @@ int main(int argc, char* argv[])
 			app.step();
 		}
 
+		const std::vector<double> normalizedInputFieldActivation = mathtools::normalizeVector(nf1->getComponent("activation"));
+		const std::vector<double> normalizedTargetFieldActivation = mathtools::normalizeVector(nf2->getComponent("activation"));
+
+
 		simulation->removeElement("gauss stimulus input field");
 		simulation->removeElement("gauss stimulus target field");
 
@@ -89,13 +94,10 @@ int main(int argc, char* argv[])
 			app.step();
 		}
 
-		const std::vector<double> normalizedInputFieldActivation = mathtools::normalizeVector(nf1->getComponent("activation"));
-		const std::vector<double> normalizedTargetFieldActivation = mathtools::normalizeVector(nf2->getComponent("activation"));
-
 		utilities::saveVectorToFile(normalizedInputFieldActivation, "C:/dev-files/dynamic-field-composer-lite/dynamic-field-composer-lite/data/couplings/normalizedInputFieldActivation.txt");
 		utilities::saveVectorToFile(normalizedTargetFieldActivation, "C:/dev-files/dynamic-field-composer-lite/dynamic-field-composer-lite/data/couplings/normalizedTargetFieldActivation.txt");
 
-		for (size_t i = 0; i < 1000; i++)
+		for (size_t i = 0; i < 100; i++)
 		{
 			fc->updateWeights(normalizedInputFieldActivation, normalizedTargetFieldActivation);
 		}

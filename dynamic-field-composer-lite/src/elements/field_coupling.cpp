@@ -39,15 +39,19 @@ namespace dnf_composer
 		{
 			updateInput();
 
+			for (auto& value : components["input"])
+				if (value < 0)
+					value = 0;
+
 			// multiply the input by the weights to get output
 			for (int i = 0; i < static_cast<int>(components["output"].size()); i++)
 				for (int j = 0; j < static_cast<int>(components["input"].size()); j++)
 					components["output"][i] += weights[j][i] * components["input"][j];
 
 			// only the positive values of the output are considered
-			//for (auto& value : components["output"])
-				//if (value < 0)
-					//value = 0;
+			for (auto& value : components["output"])
+				if (value < 0)
+					value = 0;
 
 			// Scale the output by parameter k
 			for (auto& value : components["output"])
